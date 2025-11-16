@@ -1,13 +1,13 @@
 from django.urls import path
-from . import views
+from .views import user_login, user_logout, register, list_books, LibraryDetailView
 
 urlpatterns = [
-    path('login/', views.user_login, name='login'),
-    path('logout/', views.user_logout, name='logout'),
-    path('register/', views.register, name='register'),
+    # Authentication URLs
+    path('login/', user_login, name='login'),
+    path('logout/', user_logout, name='logout'),
+    path('register/', register, name='register'),
 
-     path('books/', views.list_books, name='list_books'),  # FBV
-    path('library/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),  # CBV
-
-
+    # Book and Library Views
+    path('books/', list_books, name='list_books'),  # ✅ Explicit import for FBV
+    path('library/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
 ]
