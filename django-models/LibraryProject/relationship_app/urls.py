@@ -1,5 +1,8 @@
+# relationship_app/urls.py
+
 from django.urls import path
-from .views import user_login, user_logout, register, list_books, LibraryDetailView
+from .views import list_books
+from .views import user_login, user_logout, register, LibraryDetailView
 
 urlpatterns = [
     # Authentication URLs
@@ -7,7 +10,9 @@ urlpatterns = [
     path('logout/', user_logout, name='logout'),
     path('register/', register, name='register'),
 
-    # Book and Library Views
-    path('books/', list_books, name='list_books'),  # ✅ Explicit import for FBV
+    # Function-Based View (FBV)
+    path('books/', list_books, name='list_books'),
+
+    # Class-Based View (CBV)
     path('library/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
 ]
