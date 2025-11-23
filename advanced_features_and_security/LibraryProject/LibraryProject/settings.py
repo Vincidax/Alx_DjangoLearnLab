@@ -141,7 +141,7 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 # Additional recommendations
-SECURE_HSTS_SECONDS = 3600  # enable HTTP Strict Transport Security
+SECURE_HSTS_SECONDS = 31536000 # enable HTTP Strict Transport Security
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_SSL_REDIRECT = True  # redirect all HTTP traffic to HTTPS
@@ -150,3 +150,9 @@ CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'", 'cdnjs.cloudflare.com')  # allow scripts only from your domain or trusted CDNs
 CSP_STYLE_SRC = ("'self'", 'fonts.googleapis.com')
 CSP_IMG_SRC = ("'self'", 'data:')
+
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
