@@ -25,9 +25,9 @@ admin.site.register(CustomUser, CustomUserAdmin)
 # Book admin
 # ----------------------------
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'publication_year')
-    list_filter = ('author', 'publication_year')
-    search_fields = ('title', 'author')
+    list_display = ('title', 'author')
+    list_filter = ('author',)
+    search_fields = ('title', 'author__name')
 
 # Register Book model
 admin.site.register(Book, BookAdmin)
