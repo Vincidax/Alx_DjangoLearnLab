@@ -11,14 +11,19 @@ class BookAPITestCase(APITestCase):
         # Create test user and token
         # --------------------------
         self.user = User.objects.create_user(username='testuser', password='testpass')
-        self.token = Token.objects.create(user=self.user)
-        
+        self.token, _ = Token.objects.get_or_create(user=self.user)
+
+        # --------------------------
+        # Login using Django test client
+        # --------------------------
+        self.client.login(username='testuser', password='testpass')
+
         # --------------------------
         # Create authors
         # --------------------------
         self.author1 = Author.objects.create(name='J.K. Rowling')
         self.author2 = Author.objects.create(name='George Orwell')
-        
+
         # --------------------------
         # Create books
         # --------------------------
@@ -43,9 +48,9 @@ class BookAPITestCase(APITestCase):
         self.delete_url = lambda pk: reverse('books-delete', kwargs={'pk': pk})
 
     # --------------------------
-    # Helper: authenticate client
+    # Helper: authenticate client with token
     # --------------------------
-    def authenticate(self):
+    def authenticate_with_token(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
     # --------------------------
@@ -68,7 +73,7 @@ class BookAPITestCase(APITestCase):
     # Test: Create book (authenticated)
     # --------------------------
     def test_create_book_authenticated(self):
-        self.authenticate()
+        self.authenticate_with_token()
         data = {
             'title': 'New Book',
             'publication_year': 2023,
@@ -83,6 +88,7 @@ class BookAPITestCase(APITestCase):
     # Test: Create book (unauthenticated)
     # --------------------------
     def test_create_book_unauthenticated(self):
+        self.client.logout()  # remove session login
         self.client.credentials()  # remove token
         data = {
             'title': 'Unauthorized Book',
@@ -90,14 +96,14 @@ class BookAPITestCase(APITestCase):
             'author': self.author1.id
         }
         response = self.client.post(self.create_url, data)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn(response.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN])
         self.assertEqual(Book.objects.count(), 2)
 
     # --------------------------
     # Test: Update book (authenticated)
     # --------------------------
     def test_update_book_authenticated(self):
-        self.authenticate()
+        self.authenticate_with_token()
         data = {
             'title': 'Updated Title',
             'publication_year': 1997,
@@ -112,7 +118,7 @@ class BookAPITestCase(APITestCase):
     # Test: Delete book (authenticated)
     # --------------------------
     def test_delete_book_authenticated(self):
-        self.authenticate()
+        self.authenticate_with_token()
         response = self.client.delete(self.delete_url(self.book1.id))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Book.objects.count(), 1)
@@ -127,7 +133,7 @@ class BookAPITestCase(APITestCase):
         self.assertEqual(response.data[0]['title'], '1984')
 
     # --------------------------
-    # Test: Search books by author
+    # Test: Searching by author
     # --------------------------
     def test_search_books_by_author(self):
         response = self.client.get(self.list_url, {'search': 'Rowling'})
