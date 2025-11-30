@@ -70,3 +70,84 @@ This ensures:
 /books/<int:pk>/update/-> Update existing book
 /books/<int:pk>/delete/-> Delete a book
 ```
+
+## API Testing Documentation
+
+### Overview
+
+The `Book` API endpoints have been tested using Django REST Framework’s `APITestCase`.  
+Tests cover:
+
+- CRUD operations (Create, Retrieve, Update, Delete, List)
+- Authentication & permissions
+- Filtering, searching, and ordering
+- Data integrity
+
+---
+
+### Test File
+
+Test class: `BookAPITestCase(APITestCase)`
+
+---
+
+### Test Cases
+
+**1. List all books**
+
+- GET `/books/`
+- Checks: Status `200 OK`, returns all books.
+
+**2. Retrieve single book**
+
+- GET `/books/<id>/`
+- Checks: Status `200 OK`, returns the correct book.
+
+**3. Create book**
+
+- POST `/books/`
+- Authenticated: `201 Created`, book is saved.
+- Unauthenticated: `401 Unauthorized`, no book created.
+
+**4. Update book**
+
+- PUT `/books/<id>/`
+- Only authenticated users can update.
+- Status `200 OK`, changes reflected in DB.
+
+**5. Delete book**
+
+- DELETE `/books/<id>/`
+- Only authenticated users can delete.
+- Status `204 No Content`, book removed.
+
+**6. Filtering by title**
+
+- GET `/books/?title=<book_title>`
+- Returns books matching the title.
+
+**7. Searching by author**
+
+- GET `/books/?search=<author_name>`
+- Returns books whose author's name contains the keyword.
+
+**8. Ordering by publication year**
+
+- GET `/books/?ordering=<field_name>` or `?ordering=-<field_name>`
+- Returns books sorted by the field, ascending or descending.
+
+---
+
+### How to Run Tests
+
+1. Activate the virtual environment:
+
+``bash
+pipenv shell
+
+```
+2. Run tests
+
+``bash
+python manage.py test api
+```
