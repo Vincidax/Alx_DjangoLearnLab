@@ -45,11 +45,6 @@ class BookCreateView(CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        """
-        Override perform_create to customize behavior on book creation.
-        Currently, it simply saves the validated book instance.
-        Additional hooks (logging, setting extra fields) can be added here.
-        """
         serializer.save()
 
 
@@ -67,10 +62,6 @@ class BookUpdateView(UpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_update(self, serializer):
-        """
-        Override perform_update to customize behavior on book update.
-        Currently, it simply saves the validated book instance.
-        """
         serializer.save()
 
 
