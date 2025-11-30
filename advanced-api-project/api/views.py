@@ -1,6 +1,6 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework import filters, generics
+from rest_framework import generics, filters
 from django_filters import rest_framework
 from .models import Book
 from .serializers import BookSerializer
@@ -13,7 +13,7 @@ from .serializers import BookSerializer
 # - Anyone (authenticated or not) can access.
 # - Read-only endpoint.
 # ------------------------------------------------------------------
-class BookListView(ListAPIView):
+class BookListView(generics.ListAPIView):
     """
     BookListView:
 
