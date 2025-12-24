@@ -8,7 +8,9 @@ from .views import (
     register,
     profile,
     home,
-    CommentCreateView, CommentUpdateView, CommentDeleteView
+    CommentCreateView, CommentUpdateView, CommentDeleteView,
+    posts_by_tag,
+    search_posts
 )
 from django.contrib.auth import views as auth_views
 
@@ -27,4 +29,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='blog/logout.html'), name='logout'),
     path('register/', register, name='register'),
     path('profile/', profile, name='profile'),
+    path('search/', search_posts, name='search'),
+    path('tags/<str:tag_name>/', posts_by_tag, name='posts-by-tag'),
 ]
