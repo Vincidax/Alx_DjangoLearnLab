@@ -1,3 +1,4 @@
+from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -45,13 +46,16 @@ def feed(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
+    post = generics.get_object_or_404(Post, pk=pk)
 
     # ✅ Prevent duplicate likes
-    if Like.objects.filter(user=request.user, post=post).exists():
-        return Response({'detail': 'Post already liked'}, status=400)
+    like, created = Like.objects.get_or_create(
+        user=request.user,
+        post=post
+    )
 
-    Like.objects.create(user=request.user, post=post)
+    if not created:
+        return Response({'detail': 'Post already liked'}, status=400)
 
     # ✅ Create notification
     if post.author != request.user:
@@ -70,7 +74,7 @@ def like_post(request, pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def unlike_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
+    post = generics.get_object_or_404(Post, pk=pk)
 
     like = Like.objects.filter(user=request.user, post=post)
     if not like.exists():
