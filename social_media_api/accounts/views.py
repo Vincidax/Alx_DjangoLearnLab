@@ -8,6 +8,7 @@ from .serializers import RegisterSerializer, UserSerializer
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+CustomUser = get_user_model()
 
 # User registration
 class RegisterView(generics.CreateAPIView):
@@ -44,25 +45,27 @@ class ProfileView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def follow_user(request, user_id):
+    users = CustomUser.objects.all()
+
     try:
-        user_to_follow = User.objects.get(id=user_id)
+        user_to_follow = CustomUser.objects.get(id=user_id)
         request.user.following.add(user_to_follow)
         return Response({'message': 'User followed successfully'})
-    except User.DoesNotExist:
+    except CustomUser.DoesNotExist:
         return Response({'error': 'User not found'}, status=404)
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def unfollow_user(request, user_id):
+    users = CustomUser.objects.all()
+
     try:
-        user_to_unfollow = User.objects.get(id=user_id)
+        user_to_unfollow = CustomUser.objects.get(id=user_id)
         request.user.following.remove(user_to_unfollow)
         return Response({'message': 'User unfollowed successfully'})
-    except User.DoesNotExist:
+    except CustomUser.DoesNotExist:
         return Response({'error': 'User not found'}, status=404)
