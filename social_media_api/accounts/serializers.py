@@ -18,19 +18,21 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField()
+    confirm_password = serializers.CharField()
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'password', 'confirm_password']
 
     def create(self, validated_data):
+        validated_data.pop('confirm_password')
+
         user = get_user_model().objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email'),
             password=validated_data['password']
         )
 
-        # Create token for the user
         Token.objects.create(user=user)
         return user
